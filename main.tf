@@ -8,6 +8,30 @@ resource "aws_s3_bucket" "log_bucket" {
     prevent_destroy = true
   }
 }
+# Add this to your existing main.tf
+resource "aws_s3_bucket_policy" "enforce_https" {
+  bucket = aws_s3_bucket.log_bucket.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "EnforceSecureTransport"
+        Effect = "Deny"
+        Principal = "*"
+        Action = "s3:*"
+        Resource = [
+          "${aws_s3_bucket.log_bucket.arn}",
+          "${aws_s3_bucket.log_bucket.arn}/*"
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      }
+    ]
+  })
+}
 
 # Enable versioning
 resource "aws_s3_bucket_versioning" "log_versioning" {

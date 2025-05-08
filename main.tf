@@ -4,9 +4,7 @@
 resource "aws_s3_bucket" "log_bucket" {
   bucket = "s3-log-bucket-example001" 
 
-  lifecycle {
-    prevent_destroy = true
-  }
+ 
 }
 # Add this to your existing main.tf
 resource "aws_s3_bucket_policy" "enforce_https" {
